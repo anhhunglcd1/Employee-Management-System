@@ -27,9 +27,12 @@ public class MainFrame extends JFrame {
         departmentPanel = new DepartmentPanel();
         
         // Thêm các tab
-        tabbedPane.addTab("👥 QUẢN LÝ NHÂN VIÊN", employeePanel);
-        tabbedPane.addTab("🏢 QUẢN LÝ PHÒNG BAN & CHỨC VỤ", departmentPanel);
-        
+        tabbedPane.addTab("QUẢN LÝ NHÂN VIÊN", employeePanel);
+        tabbedPane.addTab("QUẢN LÝ PHÒNG BAN & CHỨC VỤ", departmentPanel);
+        tabbedPane.addTab("CHẤM CÔNG", new AttendancePanel());
+        tabbedPane.addTab("LƯƠNG", new SalaryPanel());
+        tabbedPane.addTab("NGHỈ PHÉP", new LeavePanel());
+        tabbedPane.addTab("HỢP ĐỒNG", new ContractPanel());
         // Thêm vào JFrame
         setLayout(new BorderLayout());
         add(createHeaderPanel(), BorderLayout.NORTH);

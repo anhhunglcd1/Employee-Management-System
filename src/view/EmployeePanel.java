@@ -72,7 +72,7 @@ public class EmployeePanel extends JPanel {
         employeeTable.setRowHeight(25);
         employeeTable.getTableHeader().setFont(new Font("Arial", Font. BOLD, 12));
         employeeTable.getTableHeader().setBackground(new Color(52, 152, 219));
-        employeeTable.getTableHeader().setForeground(Color.WHITE);
+//        employeeTable.getTableHeader().setForeground(Color.WHITE);
         
         // Hide ID column
         employeeTable.getColumnModel().getColumn(0).setMinWidth(0);
@@ -93,7 +93,7 @@ public class EmployeePanel extends JPanel {
         txtSearch = new JTextField(30);
         
         cboGender = new JComboBox<>(new String[]{"Nam", "Nữ", "Khác"});
-        cboStatus = new JComboBox<>(new String[]{"WORKING", "ON_LEAVE", "RESIGNED"});
+        cboStatus = new JComboBox<>(new String[]{"Đang làm việc", "Đang nghỉ phép", "Đã nghỉ việc"});
         
         cboDepartment = new JComboBox<>();
         cboPosition = new JComboBox<>();

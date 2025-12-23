@@ -9,7 +9,7 @@ public class LeaveRequest {
     private String leaveType; // ANNUAL, SICK, UNPAID, PERSONAL
     private LocalDate startDate;
     private LocalDate endDate;
-    private int totalDays;
+    private double totalDays;
     private String reason;
     private String status; // PENDING, APPROVED, REJECTED
     private int approverId;
@@ -20,7 +20,7 @@ public class LeaveRequest {
     public LeaveRequest() {}
     
     public LeaveRequest(int id, int employeeId, String leaveType, LocalDate startDate, 
-                       LocalDate endDate, int totalDays, String reason, String status, 
+                       LocalDate endDate, double totalDays, String reason, String status, 
                        int approverId, LocalDateTime requestDate, LocalDateTime approveDate, 
                        String approverNote) {
         this.id = id;
@@ -53,8 +53,8 @@ public class LeaveRequest {
     public LocalDate getEndDate() { return endDate; }
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
     
-    public int getTotalDays() { return totalDays; }
-    public void setTotalDays(int totalDays) { this.totalDays = totalDays; }
+    public double getTotalDays() { return totalDays; }
+    public void setTotalDays(double totalDays) { this.totalDays = totalDays; }
     
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }

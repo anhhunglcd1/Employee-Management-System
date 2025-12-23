@@ -78,7 +78,7 @@ public class DepartmentPanel extends JPanel {
         txtDeptCode = new JTextField(15);
         txtDeptName = new JTextField(15);
         txtDeptDesc = new JTextField(15);
-        cboDeptStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
+        cboDeptStatus = new JComboBox<>(new String[]{"Hoạt động", "Không hoạt động"});
         
         btnAddDept = createButton("➕ Thêm", new Color(46, 204, 113));
         btnUpdateDept = createButton("✏️ Sửa", new Color(52, 152, 219));
@@ -100,7 +100,7 @@ public class DepartmentPanel extends JPanel {
     private JButton createButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
+//        button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 11));
         return button;

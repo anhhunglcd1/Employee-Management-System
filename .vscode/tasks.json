@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run HTQLNV (ant run)",
+			"type": "shell",
+			"command": "ant",
+			"args": [
+				"run"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}
