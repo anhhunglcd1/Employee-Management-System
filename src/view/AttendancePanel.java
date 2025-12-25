@@ -91,12 +91,12 @@ public class AttendancePanel extends JPanel {
         spnYear = new JSpinner(new SpinnerNumberModel(LocalDate.now().getYear(), 2020, 2100, 1));
         
         // Buttons
-        btnAdd = createButton("➕ Thêm", new Color(46, 204, 113));
-        btnUpdate = createButton("✏️ Cập Nhật", new Color(52, 152, 219));
-        btnDelete = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClear = createButton("🔄 Làm Mới", new Color(149, 165, 166));
-        btnFilter = createButton("🔍 Lọc Theo Tháng", new Color(155, 89, 182));
-        btnCalculate = createButton("🧮 Tính Toán", new Color(241, 196, 15));
+        btnAdd = createButton("Thêm", new Color(46, 204, 113));
+        btnUpdate = createButton("Cập Nhật", new Color(52, 152, 219));
+        btnDelete = createButton("Xóa", new Color(231, 76, 60));
+        btnClear = createButton("Làm Mới", new Color(149, 165, 166));
+        btnFilter = createButton("Lọc Theo Tháng", new Color(155, 89, 182));
+        btnCalculate = createButton("Tính Toán", new Color(241, 196, 15));
     }
     
     private JButton createButton(String text, Color bgColor) {

@@ -80,10 +80,10 @@ public class DepartmentPanel extends JPanel {
         txtDeptDesc = new JTextField(15);
         cboDeptStatus = new JComboBox<>(new String[]{"Hoạt động", "Không hoạt động"});
         
-        btnAddDept = createButton("➕ Thêm", new Color(46, 204, 113));
-        btnUpdateDept = createButton("✏️ Sửa", new Color(52, 152, 219));
-        btnDeleteDept = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClearDept = createButton("🔄 Clear", new Color(149, 165, 166));
+        btnAddDept = createButton("Thêm", new Color(46, 204, 113));
+        btnUpdateDept = createButton("Sửa", new Color(52, 152, 219));
+        btnDeleteDept = createButton("Xóa", new Color(231, 76, 60));
+        btnClearDept = createButton("Clear", new Color(149, 165, 166));
         
         // Position Form
         txtPosCode = new JTextField(15);
@@ -91,10 +91,10 @@ public class DepartmentPanel extends JPanel {
         txtPosDesc = new JTextField(15);
         cboPosLevel = new JComboBox<>(new String[]{"STAFF", "TEAM_LEADER", "MANAGER", "DIRECTOR"});
         
-        btnAddPos = createButton("➕ Thêm", new Color(46, 204, 113));
-        btnUpdatePos = createButton("✏️ Sửa", new Color(52, 152, 219));
-        btnDeletePos = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClearPos = createButton("🔄 Clear", new Color(149, 165, 166));
+        btnAddPos = createButton("Thêm", new Color(46, 204, 113));
+        btnUpdatePos = createButton("Sửa", new Color(52, 152, 219));
+        btnDeletePos = createButton("Xóa", new Color(231, 76, 60));
+        btnClearPos = createButton("Clear", new Color(149, 165, 166));
     }
     
     private JButton createButton(String text, Color bgColor) {

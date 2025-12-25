@@ -84,13 +84,13 @@ public class LeavePanel extends JPanel {
         txtApproverNote = new JTextArea(3, 20);
         
         // Buttons
-        btnAdd = createButton("➕ Đăng Ký", new Color(46, 204, 113));
-        btnUpdate = createButton("✏️ Cập Nhật", new Color(52, 152, 219));
-        btnDelete = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClear = createButton("🔄 Làm Mới", new Color(149, 165, 166));
-        btnApprove = createButton("✅ Duyệt", new Color(39, 174, 96));
-        btnReject = createButton("❌ Từ Chối", new Color(192, 57, 43));
-        btnFilter = createButton("🔍 Lọc", new Color(155, 89, 182));
+        btnAdd = createButton("Đăng Ký", new Color(46, 204, 113));
+        btnUpdate = createButton("Cập Nhật", new Color(52, 152, 219));
+        btnDelete = createButton("Xóa", new Color(231, 76, 60));
+        btnClear = createButton("Làm Mới", new Color(149, 165, 166));
+        btnApprove = createButton("Duyệt", new Color(39, 174, 96));
+        btnReject = createButton("Từ Chối", new Color(192, 57, 43));
+        btnFilter = createButton("Lọc", new Color(155, 89, 182));
     }
     
     private JButton createButton(String text, Color bgColor) {
@@ -328,7 +328,7 @@ public class LeavePanel extends JPanel {
         
         String note = txtApproverNote.getText().trim();
         
-        if (leaveRequestDAO.approveLeaveRequest(selectedRequestId, 1, "APPROVED", note)) {
+        if (leaveRequestDAO.approveLeaveRequest(selectedRequestId, 0, "APPROVED", note)) {
             JOptionPane.showMessageDialog(this, "Duyệt đơn thành công!");
             loadLeaveRequests();
             clearForm();
@@ -349,7 +349,7 @@ public class LeavePanel extends JPanel {
             return;
         }
         
-        if (leaveRequestDAO.approveLeaveRequest(selectedRequestId, 1, "REJECTED", note)) {
+        if (leaveRequestDAO.approveLeaveRequest(selectedRequestId, 0, "REJECTED", note)) {
             JOptionPane.showMessageDialog(this, "Từ chối đơn thành công!");
             loadLeaveRequests();
             clearForm();

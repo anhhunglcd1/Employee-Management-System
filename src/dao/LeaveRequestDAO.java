@@ -128,25 +128,96 @@ public class LeaveRequestDAO {
     }
     
     /**
-     * Duyệt đơn nghỉ phép (gọi Stored Procedure)
+     * Duyệt đơn nghỉ phép và cập nhật trạng thái nhân viên
      */
     public boolean approveLeaveRequest(int requestId, int approverId, String status, String note) {
-        String sql = "{CALL sp_ApproveLeaveRequest(?, ?, ?, ? )}";
+        Connection conn = null;
+        PreparedStatement pstmtLeave = null;
+        PreparedStatement pstmtEmployee = null;
+        PreparedStatement pstmtGetEmp = null;
+        ResultSet rs = null;
         
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement cstmt = conn.prepareCall(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Bắt đầu transaction
             
-            cstmt.setInt(1, requestId);
-            cstmt.setInt(2, approverId);
-            cstmt. setString(3, status);
-            cstmt.setString(4, note);
+            // 1. Cập nhật đơn nghỉ phép
+            String sqlLeave = "UPDATE LeaveRequests SET status = ?, approver_id = ?, approver_note = ?, " +
+                             "approve_date = GETDATE() WHERE id = ?";
+            pstmtLeave = conn.prepareStatement(sqlLeave);
             
-            cstmt.execute();
-            return true;
+            pstmtLeave.setString(1, status);
+            if (approverId > 0) {
+                pstmtLeave.setInt(2, approverId);
+            } else {
+                pstmtLeave.setNull(2, Types.INTEGER);
+            }
+            pstmtLeave.setString(3, note);
+            pstmtLeave.setInt(4, requestId);
+            
+            int rowsUpdated = pstmtLeave.executeUpdate();
+            
+            if (rowsUpdated > 0) {
+                // 2. Lấy employee_id từ đơn nghỉ phép
+                String sqlGetEmp = "SELECT employee_id, start_date, end_date FROM LeaveRequests WHERE id = ?";
+                pstmtGetEmp = conn.prepareStatement(sqlGetEmp);
+                pstmtGetEmp.setInt(1, requestId);
+                rs = pstmtGetEmp.executeQuery();
+                
+                if (rs.next()) {
+                    int employeeId = rs.getInt("employee_id");
+                    Date startDate = rs.getDate("start_date");
+                    Date endDate = rs.getDate("end_date");
+                    Date today = Date.valueOf(java.time.LocalDate.now());
+                    
+                    // 3. Cập nhật trạng thái nhân viên nếu đơn được duyệt và đang trong thời gian nghỉ
+                    String newEmployeeStatus = null;
+                    if (status.equals("APPROVED") && 
+                        startDate != null && endDate != null &&
+                        !today.before(startDate) && !today.after(endDate)) {
+                        newEmployeeStatus = "Đang nghỉ phép";
+                    } else if (status.equals("REJECTED") || 
+                              (status.equals("APPROVED") && endDate != null && today.after(endDate))) {
+                        newEmployeeStatus = "Đang làm việc";
+                    }
+                    
+                    if (newEmployeeStatus != null) {
+                        String sqlEmployee = "UPDATE Employees SET status = ? WHERE id = ?";
+                        pstmtEmployee = conn.prepareStatement(sqlEmployee);
+                        pstmtEmployee.setString(1, newEmployeeStatus);
+                        pstmtEmployee.setInt(2, employeeId);
+                        pstmtEmployee.executeUpdate();
+                    }
+                }
+            }
+            
+            conn.commit(); // Commit transaction
+            return rowsUpdated > 0;
             
         } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback nếu có lỗi
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
             e.printStackTrace();
             return false;
+        } finally {
+            // Đóng resources
+            try {
+                if (rs != null) rs.close();
+                if (pstmtGetEmp != null) pstmtGetEmp.close();
+                if (pstmtEmployee != null) pstmtEmployee.close();
+                if (pstmtLeave != null) pstmtLeave.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
     

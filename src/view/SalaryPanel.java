@@ -20,7 +20,7 @@ public class SalaryPanel extends JPanel {
     private DefaultTableModel tableModel;
     
     private JComboBox<Employee> cboEmployee;
-    private JSpinner spnMonth, spnYear;
+    private JSpinner spnMonth, spnYear, spnFilterMonth, spnFilterYear;
     private JTextField txtBaseSalary, txtSalaryCoefficient, txtAllowance, txtOvertimePay, txtBonus, txtOtherIncome;
     private JTextField txtLateDeduction, txtAbsentDeduction, txtInsurance, txtTax, txtOtherDeduction;
     private JTextField txtGrossSalary, txtTotalDeduction, txtNetSalary;
@@ -65,6 +65,10 @@ public class SalaryPanel extends JPanel {
         spnMonth = new JSpinner(new SpinnerNumberModel(1, 1, 12, 1));
         spnYear = new JSpinner(new SpinnerNumberModel(2025, 2020, 2100, 1));
         
+        // Filter spinners
+        spnFilterMonth = new JSpinner(new SpinnerNumberModel(1, 1, 12, 1));
+        spnFilterYear = new JSpinner(new SpinnerNumberModel(2025, 2020, 2100, 1));
+        
         txtBaseSalary = new JTextField(15);
         txtSalaryCoefficient = new JTextField(15);
         txtSalaryCoefficient.setEditable(false);
@@ -101,12 +105,12 @@ public class SalaryPanel extends JPanel {
         txtNotes = new JTextArea(3, 20);
         
         // Buttons
-        btnCalculate = createButton("🧮 Tính Lương (SP)", new Color(241, 196, 15));
-        btnSave = createButton("💾 Lưu", new Color(46, 204, 113));
-        btnApprove = createButton("✅ Duyệt", new Color(52, 152, 219));
-        btnDelete = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClear = createButton("🔄 Làm Mới", new Color(149, 165, 166));
-        btnFilter = createButton("🔍 Lọc", new Color(155, 89, 182));
+        btnCalculate = createButton("Tính Lương (SP)", new Color(241, 196, 15));
+        btnSave = createButton("Lưu", new Color(46, 204, 113));
+        btnApprove = createButton("Duyệt", new Color(52, 152, 219));
+        btnDelete = createButton("Xóa", new Color(231, 76, 60));
+        btnClear = createButton("Làm Mới", new Color(149, 165, 166));
+        btnFilter = createButton("Lọc", new Color(155, 89, 182));
     }
     
     private JButton createButton(String text, Color bgColor) {
@@ -122,9 +126,9 @@ public class SalaryPanel extends JPanel {
         // Filter Panel
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filterPanel.add(new JLabel("Tháng:"));
-        filterPanel.add(spnMonth);
-        filterPanel. add(new JLabel("Năm:"));
-        filterPanel. add(spnYear);
+        filterPanel.add(spnFilterMonth);
+        filterPanel.add(new JLabel("Năm:"));
+        filterPanel.add(spnFilterYear);
         filterPanel.add(btnFilter);
         
         // Form Panel
@@ -381,8 +385,8 @@ public class SalaryPanel extends JPanel {
     }
     
     private void filterByPeriod() {
-        int month = (int) spnMonth.getValue();
-        int year = (int) spnYear.getValue();
+        int month = (int) spnFilterMonth.getValue();
+        int year = (int) spnFilterYear.getValue();
         
         tableModel.setRowCount(0);
         List<Salary> salaries = salaryDAO.getSalariesByPeriod(month, year);
@@ -470,7 +474,7 @@ public class SalaryPanel extends JPanel {
         int month = (int) spnMonth.getValue();
         int year = (int) spnYear.getValue();
         
-        if (salaryDAO.approveSalary(emp.getId(), month, year, 1)) { // Approver ID = 1
+        if (salaryDAO.approveSalary(emp.getId(), month, year, 0)) { // Approver ID = 0 (NULL)
             JOptionPane.showMessageDialog(this, "Duyệt lương thành công!");
             loadSalaryData();
             cboStatus.setSelectedItem("APPROVED");
@@ -491,6 +495,8 @@ public class SalaryPanel extends JPanel {
         if (cboEmployee.getItemCount() > 0) cboEmployee.setSelectedIndex(0);
         spnMonth.setValue(1);
         spnYear.setValue(2025);
+        spnFilterMonth.setValue(1);
+        spnFilterYear.setValue(2025);
         txtBaseSalary.setText("");
         txtSalaryCoefficient.setText("");
         txtAllowance.setText("");

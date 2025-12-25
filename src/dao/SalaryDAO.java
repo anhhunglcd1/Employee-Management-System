@@ -222,7 +222,12 @@ public class SalaryDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setInt(1, approverId);
+            // Cho phép approved_by NULL nếu approverId <= 0
+            if (approverId > 0) {
+                pstmt.setInt(1, approverId);
+            } else {
+                pstmt.setNull(1, Types.INTEGER);
+            }
             pstmt.setInt(2, employeeId);
             pstmt.setInt(3, month);
             pstmt.setInt(4, year);

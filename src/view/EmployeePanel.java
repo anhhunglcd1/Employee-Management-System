@@ -110,12 +110,12 @@ public class EmployeePanel extends JPanel {
         spnJoinDate. setEditor(joinEditor);
         
         // === BUTTONS ===
-        btnAdd = createButton("➕ Thêm", new Color(46, 204, 113));
-        btnUpdate = createButton("✏️ Cập Nhật", new Color(52, 152, 219));
-        btnDelete = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClear = createButton("🔄 Làm Mới", new Color(149, 165, 166));
-        btnRefresh = createButton("↻ Tải Lại", new Color(241, 196, 15));
-        btnSearch = createButton("🔍 Tìm Kiếm", new Color(155, 89, 182));
+        btnAdd = createButton("Thêm", new Color(46, 204, 113));
+        btnUpdate = createButton("Cập Nhật", new Color(52, 152, 219));
+        btnDelete = createButton("Xóa", new Color(231, 76, 60));
+        btnClear = createButton("Làm Mới", new Color(149, 165, 166));
+        btnRefresh = createButton("Tải Lại", new Color(241, 196, 15));
+        btnSearch = createButton("Tìm Kiếm", new Color(155, 89, 182));
     }
     
     private JButton createButton(String text, Color bgColor) {

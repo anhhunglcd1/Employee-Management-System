@@ -84,11 +84,11 @@ public class ContractPanel extends JPanel {
         txtNotes = new JTextArea(3, 20);
         
         // Buttons
-        btnAdd = createButton("➕ Thêm", new Color(46, 204, 113));
-        btnUpdate = createButton("✏️ Cập Nhật", new Color(52, 152, 219));
-        btnDelete = createButton("🗑️ Xóa", new Color(231, 76, 60));
-        btnClear = createButton("🔄 Làm Mới", new Color(149, 165, 166));
-        btnExpiring = createButton("⚠️ HĐ Sắp Hết Hạn", new Color(230, 126, 34));
+        btnAdd = createButton("Thêm", new Color(46, 204, 113));
+        btnUpdate = createButton("Cập Nhật", new Color(52, 152, 219));
+        btnDelete = createButton("Xóa", new Color(231, 76, 60));
+        btnClear = createButton("Làm Mới", new Color(149, 165, 166));
+        btnExpiring = createButton("HĐ Sắp Hết Hạn", new Color(230, 126, 34));
     }
     
     private JButton createButton(String text, Color bgColor) {
