@@ -1,4 +1,4 @@
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c24649f5-7d33-4327-bf54-8a0f015018ed" /># HỆ THỐNG QUẢN LÝ NHÂN SỰ
+# HỆ THỐNG QUẢN LÝ NHÂN SỰ
 ### 🏢 🚀 Giới thiệu dự án
 Quản lý nhân sự xây dựng bằng **Java Swing** và **Microsoft SQL Server** (JDBC).  
 Phục vụ các nghiệp vụ cơ bản của phòng nhân sự: quản lý nhân viên, phòng ban - chức vụ, chấm công, tính lương, nghỉ phép, hợp đồng.
