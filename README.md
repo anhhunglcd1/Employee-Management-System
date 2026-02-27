@@ -34,7 +34,7 @@ Tiếp theo chọn như hình bên dưới (sa) ->(Chuột phải vào) sa -> Pr
 
 <img width="1719" height="932" alt="image" src="https://github.com/user-attachments/assets/9fc60ccd-4a6c-4228-96c3-b33d025f744b" />
 
-Phần General đặt password and config password: mkdc@2025 . Bỏ chọn Enforce password policy
+Phần General đặt password and config password: mkdc@2025. Bỏ chọn Enforce password policy
 
 <img width="1719" height="932" alt="image" src="https://github.com/user-attachments/assets/3b0ec7c9-3e96-41d0-8042-55ba55153afa" />
 
@@ -56,7 +56,26 @@ SQL Server Configuration Manager -> SQL Server Network Configuration -> protocol
 
 Chọn SQL Server Services -> SQL Server (SQLEXPRESS) -> (Chuột phải) restart
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/faab5446-d6af-4834-b7fb-a36f002eafc5" />
+<img width="945" height="712" alt="image" src="https://github.com/user-attachments/assets/3f592948-cc1c-41d0-9709-47dd0cf6964f" />
+
+Vào lại SQL Server Management Studio 22 đăng nhập bằng sa và password: mkdc@2025 -> Connect
+
+<img width="1718" height="929" alt="image" src="https://github.com/user-attachments/assets/77bfdf87-601d-4085-aa6a-051e00bd6ed1" />
+
+Mở file lib + database trong project -> mở file htql.sql -> Execute
+
+<img width="1717" height="929" alt="image" src="https://github.com/user-attachments/assets/f7ecaad3-f2b1-42cc-bd4b-5cc1721b5999" />
+
+Vào netbean mở file project add thư viện mssql-jdbc-13.2.1.jre11.jar trong file file lib + database trong project
+Và chạy run (jdk 17)
+
+
+
+
+
+
+
+
 
 
 
