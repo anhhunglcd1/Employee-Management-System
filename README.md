@@ -34,7 +34,7 @@ Tiếp theo chọn như hình bên dưới (sa) ->(Chuột phải vào) sa -> Pr
 
 <img width="1719" height="932" alt="image" src="https://github.com/user-attachments/assets/9fc60ccd-4a6c-4228-96c3-b33d025f744b" />
 
-Phần General đặt password and config password: mkdc@2025. Bỏ chọn Enforce password policy
+Phần General đặt password and confirm password: mkdc@2025. Bỏ chọn Enforce password policy
 
 <img width="1719" height="932" alt="image" src="https://github.com/user-attachments/assets/3b0ec7c9-3e96-41d0-8042-55ba55153afa" />
 
