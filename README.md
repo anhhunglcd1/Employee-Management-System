@@ -69,6 +69,9 @@ Mở file lib + database trong project -> mở file htql.sql -> Execute
 Vào netbean mở file project add thư viện mssql-jdbc-13.2.1.jre11.jar trong file file lib + database trong project
 Và chạy run (jdk 17)
 
+<img width="497" height="215" alt="image" src="https://github.com/user-attachments/assets/417b2a89-84d5-49fc-91a6-5ece77dda4c8" />
+
+
 
 
 
