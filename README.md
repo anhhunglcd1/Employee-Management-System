@@ -12,3 +12,6 @@ Phục vụ các nghiệp vụ cơ bản của phòng nhân sự: quản lý nh�
 | 👨‍💻 **[Họ tên Thành viên 4]** | **Nhóm chức năng 2:** **Nghỉ phép** (tạo đơn, duyệt/từ chối, quản lý trạng thái); **Hợp đồng** (tạo/cập nhật, theo dõi hết hạn); **Báo cáo** (tổng hợp nội dung, hình/bảng, đánh giá). |
 
 ### 📘 🛠️ Hướng dẫn setup
+```bash
+https://go.microsoft.com/fwlink/p/?linkid=2216019&clcid=0x409&culture=en-us&country=us
+```
