@@ -6,7 +6,7 @@ public class DatabaseConnection {
     // Thông tin kết nối
     private static final String SERVER = "localhost";
     private static final String PORT = "1433";
-    private static final String DATABASE = "HRMS_Database";
+    private static final String DATABASE = "htqlnv";
     private static final String USERNAME = "sa"; // Hoặc "sa"
     private static final String PASSWORD = "mkdc@2025"; // Thay đổi theo mật khẩu của bạn
     

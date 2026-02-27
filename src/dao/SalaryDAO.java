@@ -190,6 +190,52 @@ public class SalaryDAO {
     }
     
     /**
+     * Lấy thông tin lương cơ bản / hệ số / phụ cấp của nhân viên.
+     * Ưu tiên từ BaseSalary, fallback sang Contracts.
+     */
+    public Salary getBaseSalaryInfo(int employeeId) {
+        Salary info = new Salary();
+        info.setSalaryCoefficient(1.0); // mặc định
+
+        // 1. Thử lấy từ BaseSalary
+        String sql = "SELECT TOP 1 base_salary, salary_coefficient, allowance " +
+                     "FROM BaseSalary WHERE employee_id = ? AND status = 'ACTIVE' " +
+                     "ORDER BY effective_date DESC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, employeeId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                info.setBaseSalary(rs.getDouble("base_salary"));
+                info.setSalaryCoefficient(rs.getDouble("salary_coefficient"));
+                info.setAllowance(rs.getDouble("allowance"));
+                return info;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // 2. Fallback: lấy từ Contracts
+        sql = "SELECT TOP 1 salary, salary_coefficient, allowance " +
+              "FROM Contracts WHERE employee_id = ? AND status = 'ACTIVE' " +
+              "ORDER BY start_date DESC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, employeeId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                info.setBaseSalary(rs.getDouble("salary"));
+                info.setSalaryCoefficient(rs.getDouble("salary_coefficient"));
+                info.setAllowance(rs.getDouble("allowance"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return info;
+    }
+
+    /**
      * Tính lương tháng (gọi Stored Procedure)
      */
     public boolean calculateMonthlySalary(int employeeId, int month, int year) {
@@ -216,7 +262,7 @@ public class SalaryDAO {
      */
     public boolean approveSalary(int employeeId, int month, int year, int approverId) {
         String sql = "UPDATE MonthlySalary SET status = 'APPROVED', approved_by = ?, " +
-                    "approved_date = GETDATE() WHERE employee_id = ?  " +
+                    "updated_date = GETDATE() WHERE employee_id = ? " +
                     "AND salary_month = ? AND salary_year = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();

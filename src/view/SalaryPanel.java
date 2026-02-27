@@ -71,8 +71,6 @@ public class SalaryPanel extends JPanel {
         
         txtBaseSalary = new JTextField(15);
         txtSalaryCoefficient = new JTextField(15);
-        txtSalaryCoefficient.setEditable(false);
-        txtSalaryCoefficient.setBackground(Color.LIGHT_GRAY);
         txtAllowance = new JTextField(15);
         txtOvertimePay = new JTextField(15);
         txtBonus = new JTextField(15);
@@ -106,7 +104,7 @@ public class SalaryPanel extends JPanel {
         
         // Buttons
         btnCalculate = createButton("Tính Lương (SP)", new Color(241, 196, 15));
-        btnSave = createButton("Lưu", new Color(46, 204, 113));
+        // btnSave = createButton("Lưu", new Color(46, 204, 113));
         btnApprove = createButton("Duyệt", new Color(52, 152, 219));
         btnDelete = createButton("Xóa", new Color(231, 76, 60));
         btnClear = createButton("Làm Mới", new Color(149, 165, 166));
@@ -311,7 +309,7 @@ public class SalaryPanel extends JPanel {
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 4;
         JPanel btnPanel = new JPanel(new FlowLayout());
         btnPanel.add(btnCalculate);
-        btnPanel.add(btnSave);
+//        btnPanel.add(btnSave);
         btnPanel.add(btnApprove);
         btnPanel.add(btnDelete);
         btnPanel.add(btnClear);
@@ -334,16 +332,41 @@ public class SalaryPanel extends JPanel {
     
     private void setupEventListeners() {
         btnCalculate.addActionListener(e -> calculateSalaryBySP());
-        btnSave.addActionListener(e -> saveSalary());
+//        btnSave.addActionListener(e -> saveSalary());
         btnApprove.addActionListener(e -> approveSalary());
         btnDelete.addActionListener(e -> deleteSalary());
         btnClear.addActionListener(e -> clearForm());
         btnFilter.addActionListener(e -> filterByPeriod());
-        
+
+        // Khi chọn nhân viên -> tự động load lương cơ bản, hệ số, phụ cấp
+        cboEmployee.addActionListener(e -> loadEmployeeBaseSalary());
+
+        // Khi thay đổi bất kỳ trường thu nhập / khấu trừ -> tự tính lại lương
+        addRecalcListener(txtBaseSalary);
+        addRecalcListener(txtSalaryCoefficient);
+        addRecalcListener(txtAllowance);
+        addRecalcListener(txtOvertimePay);
+        addRecalcListener(txtBonus);
+        addRecalcListener(txtOtherIncome);
+        addRecalcListener(txtLateDeduction);
+        addRecalcListener(txtAbsentDeduction);
+        addRecalcListener(txtInsurance);
+        addRecalcListener(txtTax);
+        addRecalcListener(txtOtherDeduction);
+
         salaryTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 loadSelectedSalary();
             }
+        });
+    }
+
+    /** Thêm DocumentListener để tự tính lại khi nhập */
+    private void addRecalcListener(JTextField field) {
+        field.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e)  { recalculateFromForm(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e)  { recalculateFromForm(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { recalculateFromForm(); }
         });
     }
     
@@ -414,23 +437,42 @@ public class SalaryPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên!");
             return;
         }
-        
+
         Employee emp = (Employee) cboEmployee.getSelectedItem();
         int month = (int) spnMonth.getValue();
-        int year = (int) spnYear.getValue();
-        
-        if (salaryDAO.calculateMonthlySalary(emp. getId(), month, year)) {
-            JOptionPane.showMessageDialog(this, "Tính lương thành công!");
-            
-            // Load salary data
+        int year  = (int) spnYear.getValue();
+
+        // Giữ lại giá trị thưởng / thu nhập khác mà user đã nhập
+        double bonusBefore      = parseAmount(txtBonus);
+        double otherIncomeBefore = parseAmount(txtOtherIncome);
+
+        if (salaryDAO.calculateMonthlySalary(emp.getId(), month, year)) {
             Salary salary = salaryDAO.getSalaryByEmployeeAndPeriod(emp.getId(), month, year);
             if (salary != null) {
+                // Nếu user đã nhập thưởng thì giữ nguyên, không dùng giá trị SP (= 0)
+                if (bonusBefore > 0)      salary.setBonus(bonusBefore);
+                if (otherIncomeBefore > 0) salary.setOtherIncome(otherIncomeBefore);
+
+                // Tính lại gross/net nếu có thưởng
+                if (bonusBefore > 0 || otherIncomeBefore > 0) {
+                    double gross = (salary.getBaseSalary() * salary.getSalaryCoefficient())
+                            + salary.getAllowance() + salary.getOvertimePay()
+                            + salary.getBonus() + salary.getOtherIncome();
+                    double totalDed = salary.getLateDeduction() + salary.getAbsentDeduction()
+                            + salary.getInsuranceDeduction() + salary.getTaxDeduction()
+                            + salary.getOtherDeduction();
+                    salary.setGrossSalary(gross);
+                    salary.setTotalDeduction(totalDed);
+                    salary.setNetSalary(gross - totalDed);
+                    salaryDAO.updateSalary(salary);
+                }
+
                 displaySalary(salary);
             }
-            
             loadSalaryData();
+            JOptionPane.showMessageDialog(this, "Tính lương thành công!");
         } else {
-            JOptionPane. showMessageDialog(this, "Tính lương thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tính lương thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -461,7 +503,73 @@ public class SalaryPanel extends JPanel {
     }
     
     private void saveSalary() {
-        JOptionPane.showMessageDialog(this, "Chức năng đang phát triển!");
+        if (cboEmployee.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên!");
+            return;
+        }
+        Employee emp   = (Employee) cboEmployee.getSelectedItem();
+        int month      = (int) spnMonth.getValue();
+        int year       = (int) spnYear.getValue();
+
+        // Đọc toàn bộ giá trị từ form
+        double baseSalary    = parseAmount(txtBaseSalary);
+        double coefficient   = parseCoefficient(txtSalaryCoefficient);
+        double allowance     = parseAmount(txtAllowance);
+        double overtimePay   = parseAmount(txtOvertimePay);
+        double bonus         = parseAmount(txtBonus);
+        double otherIncome   = parseAmount(txtOtherIncome);
+        double lateDed       = parseAmount(txtLateDeduction);
+        double absentDed     = parseAmount(txtAbsentDeduction);
+        double insurance     = parseAmount(txtInsurance);
+        double tax           = parseAmount(txtTax);
+        double otherDed      = parseAmount(txtOtherDeduction);
+        int workingDays      = parseIntField(txtWorkingDays);
+        int standardDays     = parseIntField(txtStandardDays);
+        double overtimeHours = parseAmount(txtOvertimeHours);
+
+        double gross      = (baseSalary * coefficient) + allowance + overtimePay + bonus + otherIncome;
+        double totalDed   = lateDed + absentDed + insurance + tax + otherDed;
+        double net        = gross - totalDed;
+
+        Salary salary = new Salary();
+        salary.setEmployeeId(emp.getId());
+        salary.setSalaryMonth(month);
+        salary.setSalaryYear(year);
+        salary.setBaseSalary(baseSalary);
+        salary.setSalaryCoefficient(coefficient);
+        salary.setAllowance(allowance);
+        salary.setOvertimePay(overtimePay);
+        salary.setBonus(bonus);
+        salary.setOtherIncome(otherIncome);
+        salary.setLateDeduction(lateDed);
+        salary.setAbsentDeduction(absentDed);
+        salary.setInsuranceDeduction(insurance);
+        salary.setTaxDeduction(tax);
+        salary.setOtherDeduction(otherDed);
+        salary.setGrossSalary(gross);
+        salary.setTotalDeduction(totalDed);
+        salary.setNetSalary(net);
+        salary.setWorkingDays(workingDays);
+        salary.setStandardDays(standardDays == 0 ? 26 : standardDays);
+        salary.setOvertimeHours(overtimeHours);
+        salary.setStatus((String) cboStatus.getSelectedItem());
+        salary.setNotes(txtNotes.getText());
+
+        // Cập nhật gross/net lên form
+        txtGrossSalary.setText(currencyFormat.format(gross));
+        txtTotalDeduction.setText(currencyFormat.format(totalDed));
+        txtNetSalary.setText(currencyFormat.format(net));
+
+        // Kiểm tra bản ghi đã tồn tại chưa
+        Salary existing = salaryDAO.getSalaryByEmployeeAndPeriod(emp.getId(), month, year);
+        boolean ok = (existing != null) ? salaryDAO.updateSalary(salary) : salaryDAO.addSalary(salary);
+
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Lưu lương thành công!");
+            loadSalaryData();
+        } else {
+            JOptionPane.showMessageDialog(this, "Lưu lương thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void approveSalary() {
@@ -484,11 +592,135 @@ public class SalaryPanel extends JPanel {
     }
     
     private void deleteSalary() {
-        JOptionPane.showMessageDialog(this, "Chức năng đang phát triển!");
+        if (cboEmployee.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa bảng lương!");
+            return;
+        }
+
+        Employee emp = (Employee) cboEmployee.getSelectedItem();
+        int month = (int) spnMonth.getValue();
+        int year  = (int) spnYear.getValue();
+
+        // Kiểm tra bản ghi tồn tại
+        Salary existing = salaryDAO.getSalaryByEmployeeAndPeriod(emp.getId(), month, year);
+        if (existing == null) {
+            JOptionPane.showMessageDialog(this,
+                "Không tìm thấy bảng lương tháng " + month + "/" + year +
+                " của nhân viên " + emp.getFullName() + "!",
+                "Không tìm thấy", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Không cho xóa bảng lương đã duyệt hoặc đã trả
+        if ("APPROVED".equals(existing.getStatus()) || "PAID".equals(existing.getStatus())) {
+            JOptionPane.showMessageDialog(this,
+                "Không thể xóa bảng lương có trạng thái '" + existing.getStatus() + "'!\n" +
+                "Chỉ có thể xóa bảng lương ở trạng thái PENDING.",
+                "Không được phép", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Xác nhận trước khi xóa
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Bạn có chắc muốn xóa bảng lương tháng " + month + "/" + year +
+            " của nhân viên " + emp.getFullName() + "?\n" +
+            "Thực lãnh: " + currencyFormat.format(existing.getNetSalary()),
+            "Xác Nhận Xóa",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        if (salaryDAO.deleteSalary(emp.getId(), month, year)) {
+            JOptionPane.showMessageDialog(this, "Xóa bảng lương thành công!");
+            clearForm();
+            loadSalaryData();
+        } else {
+            JOptionPane.showMessageDialog(this, "Xóa bảng lương thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void loadSelectedSalary() {
-        // Implementation here
+        int row = salaryTable.getSelectedRow();
+        if (row < 0) return;
+        // Đọc tháng/năm từ bảng để tìm bản ghi
+        try {
+            int month = Integer.parseInt(tableModel.getValueAt(row, 1).toString());
+            int year  = Integer.parseInt(tableModel.getValueAt(row, 2).toString());
+            String empName = tableModel.getValueAt(row, 0).toString();
+
+            // Tìm nhân viên tương ứng trong combo
+            for (int i = 0; i < cboEmployee.getItemCount(); i++) {
+                Employee e = cboEmployee.getItemAt(i);
+                if (e.getFullName().equals(empName)) {
+                    cboEmployee.setSelectedIndex(i);
+                    break;
+                }
+            }
+            spnMonth.setValue(month);
+            spnYear.setValue(year);
+
+            Employee emp = (Employee) cboEmployee.getSelectedItem();
+            if (emp != null) {
+                Salary salary = salaryDAO.getSalaryByEmployeeAndPeriod(emp.getId(), month, year);
+                if (salary != null) displaySalary(salary);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /** Load lương cơ bản / hệ số / phụ cấp khi chọn nhân viên */
+    private void loadEmployeeBaseSalary() {
+        if (cboEmployee.getSelectedItem() == null) return;
+        Employee emp = (Employee) cboEmployee.getSelectedItem();
+        Salary info = salaryDAO.getBaseSalaryInfo(emp.getId());
+        if (info.getBaseSalary() > 0 || info.getSalaryCoefficient() > 0) {
+            txtBaseSalary.setText(String.valueOf(info.getBaseSalary()));
+            txtSalaryCoefficient.setText(String.format("%.2f", info.getSalaryCoefficient()));
+            txtAllowance.setText(String.valueOf(info.getAllowance()));
+        }
+    }
+
+    /** Tính lại Gross / Tổng trừ / Thực lãnh từ các trường đang hiển thị */
+    private void recalculateFromForm() {
+        try {
+            double gross = (parseAmount(txtBaseSalary) * parseCoefficient(txtSalaryCoefficient))
+                    + parseAmount(txtAllowance)
+                    + parseAmount(txtOvertimePay)
+                    + parseAmount(txtBonus)
+                    + parseAmount(txtOtherIncome);
+            double totalDed = parseAmount(txtLateDeduction)
+                    + parseAmount(txtAbsentDeduction)
+                    + parseAmount(txtInsurance)
+                    + parseAmount(txtTax)
+                    + parseAmount(txtOtherDeduction);
+            txtGrossSalary.setText(currencyFormat.format(gross));
+            txtTotalDeduction.setText(currencyFormat.format(totalDed));
+            txtNetSalary.setText(currencyFormat.format(gross - totalDed));
+        } catch (Exception ignored) {}
+    }
+
+    /** Parse số tiền từ TextField (bỏ ký tự tiền tệ, dấu phẩy...) */
+    private double parseAmount(JTextField field) {
+        String text = field.getText().trim().replaceAll("[^\\d.]", "");
+        if (text.isEmpty() || text.equals(".")) return 0;
+        try { return Double.parseDouble(text); }
+        catch (NumberFormatException e) { return 0; }
+    }
+
+    private double parseCoefficient(JTextField field) {
+        String text = field.getText().trim().replaceAll("[^\\d.]", "");
+        if (text.isEmpty()) return 1.0;
+        try { return Double.parseDouble(text); }
+        catch (NumberFormatException e) { return 1.0; }
+    }
+
+    private int parseIntField(JTextField field) {
+        String text = field.getText().trim().replaceAll("[^\\d]", "");
+        if (text.isEmpty()) return 0;
+        try { return Integer.parseInt(text); }
+        catch (NumberFormatException e) { return 0; }
     }
     
     private void clearForm() {
