@@ -16,5 +16,6 @@ Tải và cài đặt SQL Server (SQL server 2019 trở lên hoặc link ở dư
 ```bash
 https://go.microsoft.com/fwlink/p/?linkid=2216019&clcid=0x409&culture=en-us&country=us
 ```
+
 <img width="1466" height="527" alt="SQL" src="https://github.com/user-attachments/assets/a077e1c4-bc81-4838-9858-8274b70e3c48" />
 
