@@ -19,3 +19,10 @@ https://go.microsoft.com/fwlink/p/?linkid=2216019&clcid=0x409&culture=en-us&coun
 
 <img width="1466" height="527" alt="SQL" src="https://github.com/user-attachments/assets/a077e1c4-bc81-4838-9858-8274b70e3c48" />
 
+Bấm vào file đã tải chọn basic
+
+<img width="846" height="673" alt="basic" src="https://github.com/user-attachments/assets/b87a932f-5fd3-4f2a-872a-b761ff9047ff" />
+
+
+
+
