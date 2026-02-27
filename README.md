@@ -19,9 +19,24 @@ https://go.microsoft.com/fwlink/p/?linkid=2216019&clcid=0x409&culture=en-us&coun
 
 <img width="1466" height="527" alt="SQL" src="https://github.com/user-attachments/assets/a077e1c4-bc81-4838-9858-8274b70e3c48" />
 
-Bấm vào file đã tải chọn basic
+Bấm vào file đã tải chọn basic -> Accept -> Install .Sau khi cài đặt xong chọn Install ssms và tải ssms. Tải xong khi bấm vào chọn Install để cài đặt.
+Mở SQL Server Management Studio 22 sau khi cài đặt xong.
 
-<img width="846" height="673" alt="basic" src="https://github.com/user-attachments/assets/b87a932f-5fd3-4f2a-872a-b761ff9047ff" />
+<img width="1720" height="933" alt="image" src="https://github.com/user-attachments/assets/c4983e18-14ce-481c-ace4-8c4011864933" />
+
+Chọn Browse -> Local -> (tên máy)\SQLEXPRESS 
+
+<img width="1716" height="930" alt="image" src="https://github.com/user-attachments/assets/39fd6b73-afdd-40a6-9e36-d29b1e122d4b" />
+
+Bấm Connect 
+
+
+
+
+
+
+
+
 
 
 
